@@ -1,29 +1,23 @@
 package com.example.david.kotlinchuck.mainActivity
 
+import com.example.david.kotlinchuck.lib.GreenRobotEventBus
 import com.example.david.kotlinchuck.mainActivity.event.FindJokeEvent
 import com.example.david.kotlinchuck.mainActivity.ui.FindJokeView
-import com.example.david.kotlinchuck.lib.EventBus
-import com.example.david.kotlinchuck.lib.GreenRobotEventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
  * Created by david on 28/6/17.
  */
-class FindJokePresenterImpl(view: FindJokeView) : FindJokePresenter {
-
-    var view: FindJokeView? = view
-    var eventBus: EventBus = GreenRobotEventBus.INSTANCE
-    var repository: FindJokeRepository = FindJokeRepositoryImpl()
-
+class FindJokePresenterImpl(var view: FindJokeView?, var repository: FindJokeRepository, var eventBus: GreenRobotEventBus?) : FindJokePresenter {
 
     override fun onCreate() {
-        if(view != null){
-            this.eventBus.register(this)
+        if (view != null) {
+            this.eventBus?.register(this)
         }
     }
 
     override fun onDestroy() {
-        this.eventBus.unregister(this)
+        this.eventBus?.unregister(this)
         view = null
     }
 
@@ -32,10 +26,10 @@ class FindJokePresenterImpl(view: FindJokeView) : FindJokePresenter {
         var finalName: String? = null
         var finalLastName: String? = null
 
-        if(!name.isEmpty())
+        if (!name.isEmpty())
             finalName = name
 
-        if(!lastname.isEmpty())
+        if (!lastname.isEmpty())
             finalLastName = lastname
 
         repository.findJoke(name, lastname)
@@ -44,7 +38,7 @@ class FindJokePresenterImpl(view: FindJokeView) : FindJokePresenter {
     @Subscribe
     override fun onEventMainThread(event: FindJokeEvent) {
 
-        when(event.type){
+        when (event.type) {
             FindJokeEvent.onSuccess -> view?.jokeSuccess(event.joke!!)
         }
     }
